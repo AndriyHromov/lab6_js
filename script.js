@@ -1,28 +1,34 @@
 let grid = [];
 let moves = 0;
-let levels = [];
-let currentLevelIndex = 0;
 
 function loadGame() {
     fetch("data.json")
         .then(res => res.json())
         .then(data => {
-            levels = data.levels;
-            currentLevelIndex = document.getElementById("levelSelect").value;
-            startLevel(currentLevelIndex);
+            grid = data.grid.map(row => [...row]);
+            moves = 0;
+
+            document.getElementById("moves").textContent = moves;
+            document.getElementById("status").textContent = "";
+
+            render();
         });
 }
 
-function startLevel(index) {
-    const level = levels[index];
+function refreshGame() {
+    grid = [];
 
-    grid = level.grid.map(row => [...row]);
+    for (let i = 0; i < 5; i++) {
+        let row = [];
+        for (let j = 0; j < 5; j++) {
+            row.push(Math.random() > 0.5 ? 1 : 0);
+        }
+        grid.push(row);
+    }
 
     moves = 0;
-
     document.getElementById("moves").textContent = moves;
     document.getElementById("status").textContent = "";
-    document.getElementById("minMoves").textContent = level.minMoves;
 
     render();
 }
@@ -35,9 +41,7 @@ function render() {
         for (let j = 0; j < 5; j++) {
             const cell = document.createElement("div");
 
-            cell.classList.add("cell");
-            cell.classList.add(grid[i][j] ? "on" : "off");
-
+            cell.className = "cell " + (grid[i][j] ? "on" : "off");
             cell.onclick = () => clickCell(i, j);
 
             gridEl.appendChild(cell);
@@ -61,7 +65,7 @@ function clickCell(i, j) {
 
 function toggle(i, j) {
     if (i >= 0 && i < 5 && j >= 0 && j < 5) {
-        grid[i][j] = grid[i][j] === 1 ? 0 : 1;
+        grid[i][j] = grid[i][j] ? 0 : 1;
     }
 }
 
@@ -74,8 +78,4 @@ function checkWin() {
 
     document.getElementById("status").textContent =
         "Перемога! Ходи: " + moves;
-}
-
-function refreshGame() {
-    startLevel(currentLevelIndex);
 }
