@@ -1,33 +1,21 @@
 let grid = [];
 let moves = 0;
 
-
-let levels = [];
-
-
+// 🔄 завантаження з "сервера"
 function loadGame() {
     fetch("data.json")
         .then(res => res.json())
         .then(data => {
-            levels = data.levels;
-
-            const selected = document.getElementById("levelSelect").value;
-            const level = levels[selected];
-
-            grid = level.grid.map(row => [...row]); 
-
+            grid = data.grid;
             moves = 0;
-
             document.getElementById("moves").textContent = moves;
             document.getElementById("status").textContent = "";
-
-            document.getElementById("minMoves").textContent = level.minMoves;
 
             render();
         });
 }
 
-
+// 🎨 відображення
 function render() {
     const gridEl = document.getElementById("grid");
     gridEl.innerHTML = "";
@@ -46,7 +34,7 @@ function render() {
     }
 }
 
-
+// 👆 клік
 function clickCell(i, j) {
     toggle(i, j);
     toggle(i-1, j);
@@ -61,13 +49,14 @@ function clickCell(i, j) {
     checkWin();
 }
 
-
+// 🔁 зміна стану
 function toggle(i, j) {
     if (i >= 0 && i < 5 && j >= 0 && j < 5) {
         grid[i][j] = grid[i][j] === 1 ? 0 : 1;
     }
 }
 
+// 🏆 перевірка перемоги
 function checkWin() {
     for (let row of grid) {
         for (let cell of row) {
