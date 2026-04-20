@@ -1,32 +1,33 @@
+let levels = [];
 let grid = [];
+let originalGrid = [];
 let moves = 0;
 
-function loadGame() {
-    fetch("data.json")
-        .then(res => res.json())
-        .then(data => {
-            grid = data.grid.map(row => [...row]);
-            moves = 0;
+fetch("data.json")
+    .then(res => res.json())
+    .then(data => {
+        levels = data.levels;
+    });
 
-            document.getElementById("moves").textContent = moves;
-            document.getElementById("status").textContent = "";
+function loadRandom() {
+    const randomIndex = Math.floor(Math.random() * levels.length);
 
-            render();
-        });
-}
-
-function refreshGame() {
-    grid = [];
-
-    for (let i = 0; i < 5; i++) {
-        let row = [];
-        for (let j = 0; j < 5; j++) {
-            row.push(Math.random() > 0.5 ? 1 : 0);
-        }
-        grid.push(row);
-    }
+    originalGrid = levels[randomIndex].grid.map(row => [...row]);
+    grid = originalGrid.map(row => [...row]);
 
     moves = 0;
+
+    document.getElementById("moves").textContent = moves;
+    document.getElementById("status").textContent = "";
+
+    render();
+}
+
+function resetLevel() {
+    grid = originalGrid.map(row => [...row]);
+
+    moves = 0;
+
     document.getElementById("moves").textContent = moves;
     document.getElementById("status").textContent = "";
 
